@@ -90,7 +90,7 @@ app.layout = html.Div([
     html.H4("Enter value for bar size setting:"),
     html.Div(
         dcc.Dropdown(
-            ["1 sec", "5 secs", "15 secs", "30 secs", "1 min"
+            ["1 sec", "5 secs", "15 secs", "30 secs", "1 min",
             "2 mins", "3 mins", "5 mins", "15 mins", "30 mins",
              "1 hour", "1 day"],
             "1 hour",
