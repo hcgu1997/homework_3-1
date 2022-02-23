@@ -9,7 +9,7 @@ import pandas as pd
 
 # Make a Dash app!
 app = dash.Dash(__name__)
-// add more
+# add more
 server = app.server
 
 # Define the layout.
