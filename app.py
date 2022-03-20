@@ -8,6 +8,7 @@ from fintech_ibkr import *
 import pandas as pd
 
 # Make a Dash app!
+
 app = dash.Dash(__name__)
 # add more
 server = app.server
@@ -79,6 +80,7 @@ app.layout = html.Div([
             )
         ]
     ),
+
     html.H4("Enter value for duration time:"),
     html.Div(
         dcc.Input(
@@ -86,8 +88,6 @@ app.layout = html.Div([
         ),
         style={'width': '365px'}
     ),
-
-
 
     html.H4("Enter value for bar size setting:"),
     html.Div(
@@ -138,7 +138,17 @@ app.layout = html.Div([
     # Div to hold the initial instructions and the updated info once submit is pressed
     html.Div(id='currency-output', children='Enter a currency code and press submit'),
     # Div to hold the candlestick graph
-    html.Div([dcc.Graph(id='candlestick-graph')]),
+
+    html.Div(
+        dcc.Loading(
+            id="loading-1",
+            type="circle",
+            children=[dcc.Graph(id='candlestick-graph')]
+        )
+    ),
+
+    #html.Div([dcc.Graph(id='candlestick-graph')]),
+
     # Another line break
     html.Br(),
     # Section title
@@ -200,6 +210,14 @@ def update_candlestick_graph(n_clicks, currency_string, what_to_show,
     contract.exchange = 'IDEALPRO'  # 'IDEALPRO' is the currency exchange.
     contract.currency = currency_string.split(".")[1]
 
+    contract_detail = fetch_contract_details(contract)
+    if type(contract_detail) == str:
+        return ("Error, you entered wrong input of currency pairs " + currency_string), go.Figure()
+    else:
+        if str(contract_detail).split(",")[10] != currency_string:
+            return ("The system output is not the same with your input " + currency_string), go.Figure()
+
+
     ############################################################################
     ############################################################################
     # This block is the one you'll need to work on. UN-comment the code in this
@@ -220,6 +238,7 @@ def update_candlestick_graph(n_clicks, currency_string, what_to_show,
         whatToShow=what_to_show,
         useRTH=use_rth  # <-- make a reactive input
     )
+
 
     # # # Make the candlestick figure
     fig = go.Figure(
