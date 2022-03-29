@@ -16,6 +16,8 @@ from datetime import date
 # Make a Dash app!
 app = dash.Dash(__name__)
 
+server = app.server
+
 df = pd.read_csv("C:\\Users\\hg134\\Desktop\\submitted_orders.csv")
 
 # Define the layout.
