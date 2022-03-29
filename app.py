@@ -16,7 +16,7 @@ from datetime import date
 # Make a Dash app!
 app = dash.Dash(__name__)
 
-df = pd.read_csv("/Users/gu/Desktop/submitted_orders.csv")
+df = pd.read_csv("C:\\Users\\hg134\\Desktop\\submitted_orders.csv")
 
 # Define the layout.
 app.layout = html.Div([
@@ -505,7 +505,7 @@ def trade(n_clicks, host, port, clientid, sec_type, contract_symbol,
 
     order_detail = place_order(order_contract, order)
 
-    file = pd.read_csv("/Users/gu/Desktop/submitted_orders.csv")
+    file = pd.read_csv("C:\\Users\\hg134\\Desktop\\submitted_orders.csv")
 
     time = fetch_current_time()
     order_ID = order_detail['order_id'][0]
@@ -531,7 +531,7 @@ def trade(n_clicks, host, port, clientid, sec_type, contract_symbol,
             "lmt_price": [lmt_price]
         })])
 
-    file.to_csv("/Users/gu/Desktop/submitted_orders.csv")
+    file.to_csv("C:\\Users\\hg134\\Desktop\\submitted_orders.csv")
 
     return msg, file.to_dict('records')
 

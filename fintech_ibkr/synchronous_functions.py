@@ -102,6 +102,7 @@ def fetch_historical_data(contract, endDateTime='', durationStr='30 D',
 
     def run_loop():
         app.run()
+
     api_thread = threading.Thread(target=run_loop, daemon=True)
     api_thread.start()
     start_time = datetime.now()
@@ -236,6 +237,89 @@ def place_order(contract, order, hostname=default_hostname,
     app.connect(hostname, port, client_id)
     while not app.isConnected():
         time.sleep(0.01)
+
+    def run_loop():
+        app.run()
+
+    api_thread = threading.Thread(target=run_loop, daemon=True)
+    api_thread.start()
+
+    while app.next_valid_id is None:
+        time.sleep(0.01)
+
+    app.placeOrder(app.next_valid_id, contract, order)
+    while not ('Submitted' in set(app.order_status['status'])):
+        time.sleep(0.25)
+
+    app.disconnect()
+
+    return app.order_status
+
+def fetch_matching_symbols(pattern, hostname=default_hostname,
+                           port=default_port, client_id=default_client_id):
+    app = ibkr_app()
+    app.connect(hostname, int(port), int(client_id))
+    start_time = datetime.now()
+    while not app.isConnected():
+        time.sleep(0.01)
+        if (datetime.now() - start_time).seconds > timeout_sec:
+            app.disconnect()
+            raise Exception(
+                "fetch_contract_details",
+                "timeout",
+                "couldn't connect to IBKR"
+            )
+
+    def run_loop():
+        app.run()
+
+    api_thread = threading.Thread(target=run_loop, daemon=True)
+    api_thread.start()
+    start_time = datetime.now()
+    while app.next_valid_id is None:
+        time.sleep(0.01)
+        if (datetime.now() - start_time).seconds > timeout_sec:
+            app.disconnect()
+            raise Exception(
+                "fetch_contract_details",
+                "timeout",
+                "next_valid_id not received"
+            )
+
+    req_id = app.next_valid_id
+    app.reqMatchingSymbols(req_id, pattern)
+
+    start_time = datetime.now()
+    while app.matching_symbols is None:
+        time.sleep(0.01)
+        if (datetime.now() - start_time).seconds > timeout_sec:
+            app.disconnect()
+            raise Exception(
+                "fetch_contract_details",
+                "timeout",
+                "contract_details not received"
+            )
+
+    app.disconnect()
+
+    return app.matching_symbols
+
+def place_order(contract, order, hostname=default_hostname,
+                           port=default_port, client_id=default_client_id):
+
+    app = ibkr_app()
+    app.connect(hostname, int(port), int(client_id))
+
+    start_time = datetime.now()
+    while not app.isConnected():
+        time.sleep(0.01)
+        if (datetime.now() - start_time).seconds > timeout_sec:
+            app.disconnect()
+            raise Exception(
+                "fetch_contract_details",
+                "timeout",
+                "couldn't connect to IBKR"
+            )
 
     def run_loop():
         app.run()
